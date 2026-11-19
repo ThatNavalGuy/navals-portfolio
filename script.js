@@ -1,65 +1,28 @@
 const year = document.getElementById("year");
-
-year.textContent = new Date().getFullYear();
-
+if (year) year.textContent = String(new Date().getFullYear());
 
 const nav = document.querySelector(".nav");
-
 const menuButton = document.querySelector(".menu-button");
 
+function setMenuOpen(open) {
+  nav?.classList.toggle("mobile-open", open);
+  menuButton?.setAttribute("aria-expanded", String(open));
+  menuButton?.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+}
 
 menuButton?.addEventListener("click", () => {
-
-  const open = nav.classList.toggle("mobile-open");
-
-  menuButton.setAttribute(
-    "aria-expanded",
-    String(open)
-  );
-
+  const open = menuButton.getAttribute("aria-expanded") !== "true";
+  setMenuOpen(open);
 });
 
-
-document.querySelectorAll(".nav a").forEach(link => {
-
-  link.addEventListener("click", () => {
-
-    nav.classList.remove("mobile-open");
-
-    menuButton?.setAttribute(
-      "aria-expanded",
-      "false"
-    );
-
-  });
-
+nav?.querySelectorAll("a").forEach((link) => {
+  link.addEventListener("click", () => setMenuOpen(false));
 });
 
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") setMenuOpen(false);
+});
 
-const observer = new IntersectionObserver(
-  entries => {
-
-    entries.forEach(entry => {
-
-      if (entry.isIntersecting) {
-
-        entry.target.classList.add("visible");
-
-        observer.unobserve(entry.target);
-
-      }
-
-    });
-
-  },
-  {
-    threshold: 0.12
-  }
-);
-
-
-document.querySelectorAll(".reveal").forEach(element => {
-
-  observer.observe(element);
-
+window.addEventListener("resize", () => {
+  if (window.innerWidth > 760) setMenuOpen(false);
 });
